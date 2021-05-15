@@ -11,7 +11,7 @@ ENDIF()
       $<$<CONFIG:Debug>:/MTd>
       $<$<CONFIG:Release>:/MT>
   )
-target_compile_options( ${target} Release "/MT")
+#target_compile_options( ${target} Release "/MT")
 
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
