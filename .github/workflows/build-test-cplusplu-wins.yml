@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest]
-
+      
     steps:
     - name: Cancel previous runs on the same branch
       if: ${{ github.ref != 'refs/heads/main' }}
@@ -30,11 +30,15 @@ jobs:
         cmake --build . --config Release -j 6
         ctest -C Release -j 6
         
-     - name: Upload artifacts
-        uses: actions/upload-artifact@master
-        with:
-          name: ./build-win/Release/ProofOfSpace.exe
-          path: publish
-
+  
     - name: cmake, RunTests, and valgrind on ${{ matrix.os }}
- 
+    #         python -m markdown -x mdx_math --verbose -f proof_of_space.html proof_of_space.md
+   
+
+        
+    - name: Upload artifacts
+    - uses: actions/upload-artifact@master
+      with:
+          name: ProofOfSpace
+          path: ./build-win/Release/ProofOfSpace.exe
+
