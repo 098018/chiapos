@@ -5,13 +5,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "RELEASE")
 ENDIF()
-if(MSVC)
+
   add_compile_options(
       $<$<CONFIG:>:/MT>
       $<$<CONFIG:Debug>:/MTd>
       $<$<CONFIG:Release>:/MT>
   )
-endif()
+target_compile_options( ${target} PRIVATE "/MT")
+ set(Boost_COMPILER "-vc120")
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
