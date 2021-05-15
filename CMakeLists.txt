@@ -5,24 +5,18 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "RELEASE")
 ENDIF()
-
+if(MSVC)
+  add_compile_options(
+      $<$<CONFIG:>:/MT>
+      $<$<CONFIG:Debug>:/MTd>
+      $<$<CONFIG:Release>:/MT>
+  )
+endif()
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
-if(MSVC)     
-    # Use the static C library for all build types
-    foreach(var 
-        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
-        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
-        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
-      )
-      if(${var} MATCHES "/MD")
-        string(REGEX REPLACE "/MD" "/MT" ${var} "${${var}}") 
-      endif()
-    endforeach()    
-endif(MSVC)
+
 
 project(chiapos C CXX ASM)
 
