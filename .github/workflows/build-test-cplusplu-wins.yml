@@ -31,13 +31,11 @@ jobs:
         ctest -C Release -j 6
         
   
-    - name: cmake, RunTests, and valgrind on ${{ matrix.os }}
-    #         python -m markdown -x mdx_math --verbose -f proof_of_space.html proof_of_space.md
- 
+
     - name: upload
       uses: actions/upload-artifact@master
       with:
           name: ProofOfSpace
           path: ./build-win/Release/ProofOfSpace.exe
-    if: startsWith(matrix.os, 'ubuntu')
+
 
