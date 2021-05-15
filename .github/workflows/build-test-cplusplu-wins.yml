@@ -33,11 +33,9 @@ jobs:
   
     - name: cmake, RunTests, and valgrind on ${{ matrix.os }}
     #         python -m markdown -x mdx_math --verbose -f proof_of_space.html proof_of_space.md
-   
-
-        
-    - name: Upload artifacts
-    - uses: actions/upload-artifact@master
+ 
+    - name: upload
+      uses: actions/upload-artifact@master
       with:
           name: ProofOfSpace
           path: ./build-win/Release/ProofOfSpace.exe
