@@ -34,8 +34,10 @@ std::vector<uint64_t> b17RunPhase2(
     uint64_t memory_size,
     uint32_t num_buckets,
     uint32_t log_num_buckets,
-    const bool show_progress)
+    const bool show_progress,
+    std::string tmp2_dirname)
 {
+    std::cout << "bufan go2b17go "  << std::endl;
     // An extra bit is used, since we may have more than 2^k entries in a table. (After pruning,
     // each table will have 0.8*2^k or less entries).
     uint8_t pos_size = k;
@@ -411,6 +413,15 @@ std::vector<uint64_t> b17RunPhase2(
         if (show_progress) {
             progress(2, 8 - table_index, 6);
         }
+        if (table_index < 6 ) {
+                  std::vector<std::thread> threads;
+                  threads.emplace_back(RunBufan, table_index+1,
+                    tmp2_dirname,
+                    tmp_dirname,
+                    filename);
+            
+	threads[0].join();
+          }
     }
     L_sort_manager.reset();
     return new_table_sizes;

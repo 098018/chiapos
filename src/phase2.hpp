@@ -21,6 +21,7 @@
 #include "bitfield.hpp"
 #include "bitfield_index.hpp"
 #include "progress.hpp"
+#include "bufan.hpp"
 
 struct Phase2Results
 {
@@ -50,7 +51,8 @@ Phase2Results RunPhase2(
     uint64_t memory_size,
     uint32_t const num_buckets,
     uint32_t const log_num_buckets,
-    bool const show_progress)
+    bool const show_progress
+    , std::string tmp2_dirname /*filename*/ )
 {
     // After pruning each table will have 0.865 * 2^k or fewer entries on
     // average
@@ -244,6 +246,15 @@ Phase2Results RunPhase2(
         // FilteredDisk wrapper.
         if (table_index != 7) {
             tmp_1_disks[table_index].Truncate(0);
+            if (table_index < 6) {
+                  std::vector<std::thread> threads;
+                  threads.emplace_back(RunBufan, table_index+1,
+                    tmp2_dirname,
+                    tmp_dirname,
+                    filename);
+            
+	threads[0].join();
+            }
         }
         if (show_progress) {
             progress(2, 8 - table_index, 6);
