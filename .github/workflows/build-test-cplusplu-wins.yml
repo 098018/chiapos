@@ -39,4 +39,5 @@ jobs:
       with:
           name: ProofOfSpace
           path: ./build-win/Release/ProofOfSpace.exe
+    if: startsWith(matrix.os, 'ubuntu')
 
