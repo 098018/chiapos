@@ -12,7 +12,7 @@ ENDIF()
       $<$<CONFIG:Release>:/MT>
   )
 target_compile_options( ${target} PRIVATE "/MT")
- set(Boost_COMPILER "-vc120")
+
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
