@@ -17,7 +17,7 @@ find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL$<$<CONFIG:Debug>:Debug>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Debug>")
 
 project(chiapos C CXX ASM)
@@ -27,21 +27,21 @@ include(FetchContent)
 
 FetchContent_Declare(
   pybind11-src
-  GIT_REPOSITORY https://github.com/pybind/pybind11.git
+  GIT_REPOSITORY https://gitee.com/ibufan/pybind11.git
   GIT_TAG        v2.6.2
 )
 FetchContent_MakeAvailable(pybind11-src)
 
 FetchContent_Declare(
   cxxopts
-  GIT_REPOSITORY https://github.com/jarro2783/cxxopts.git
+  GIT_REPOSITORY https://gitee.com/ibufan/cxxopts.git
   GIT_TAG        v2.2.1
 )
 FetchContent_MakeAvailable(cxxopts)
 
 FetchContent_Declare(
   gulrak
-  GIT_REPOSITORY https://github.com/gulrak/filesystem.git
+  GIT_REPOSITORY https://gitee.com/ibufan/filesystem.git
   GIT_TAG        v1.5.4
 )
 FetchContent_MakeAvailable(gulrak)

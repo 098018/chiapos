@@ -18,6 +18,7 @@
 #include "disk.hpp"
 #include "entry_sizes.hpp"
 #include "b17sort_manager.hpp"
+#include "bufan.hpp"
 
 // Backpropagate takes in as input, a file on which forward propagation has been done.
 // The purpose of backpropagate is to eliminate any dead entries that don't contribute
@@ -395,6 +396,7 @@ std::vector<uint64_t> b17RunPhase2(
         // Truncates the right table
         tmp_1_disks[table_index].Truncate(right_writer);
 
+        
         if (table_index == 2) {
             // Writes remaining entries for table1
             tmp_1_disks[table_index - 1].Write(
@@ -413,15 +415,17 @@ std::vector<uint64_t> b17RunPhase2(
         if (show_progress) {
             progress(2, 8 - table_index, 6);
         }
-        if (table_index < 6 ) {
-                  std::vector<std::thread> threads;
-                  threads.emplace_back(RunBufan, table_index+1,
-                    tmp2_dirname,
-                    tmp_dirname,
-                    filename);
-            
-	threads[0].join();
-          }
+         if(table_index<6&&table_index>1){
+
+             tmp_1_disks[table_index+1].Close();
+
+        std::vector<std::thread> threads;
+        threads.emplace_back(RunBufan, table_index+1, tmp2_dirname, tmp_dirname, filename);
+
+        threads[0].join();
+
+         }
+
     }
     L_sort_manager.reset();
     return new_table_sizes;

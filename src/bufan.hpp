@@ -21,25 +21,23 @@ void*  RunBufan(const int i,
        if (tmp_2_filename.parent_path() != tmp_filename.parent_path()) {
      Timer copy;
     std::cout << "\tbufan gogo:" << std::endl ;
-    
-    
- std::error_code ec;
-          bool  bRenameda=false;
-          
- std::uintmax_t size =  fs::file_size(tmp_filename,ec); 
-                           std::cout << i << " before size  = " << size << '\n';
-
-    
-
+      bool  bRenameda=false;
+            std::error_code ec;
+            std::uintmax_t size =  fs::file_size(tmp_filename,ec); 
+            std::cout << i << " before size  = " << size << '\n';
+             if (fs::exists(tmp_2_filename) || fs::is_symlink(tmp_2_filename)) {
+                                  fs::remove(tmp_2_filename);
+                }
         do {
-           
-                         
                           if (!bRenameda) {
-fs::rename(tmp_filename, tmp_2_filename, ec);
+               
+             
+                   
+                    fs::rename(tmp_filename, tmp_2_filename, ec);
          
                         if (ec.value() != 0) {
-                            std::cout << " Error "  << i << ec.message()
-                                << ". Retrying in 28s." << std::endl;
+                            std::cout << " Error "  << i 
+                                << ". Retrying in 18s." << std::endl;
                         }else{
                             bRenameda = true;
                               std::uintmax_t size =  fs::file_size(tmp_2_filename,ec); 
@@ -52,17 +50,16 @@ fs::rename(tmp_filename, tmp_2_filename, ec);
 //std::cout << s << std::endl;
 
 //system(s);
- fs::create_symlink(tmp_filename, tmp_2_filename);
+                            fs::create_symlink(tmp_2_filename, tmp_filename);
   //System：执行系统的命令行
-                             
-                        
-                            #ifdef _WIN32
-                           // std::cout << "win32 " << i << std::endl;
-                           Sleep(28 * 10000);
-#else
-                            sleep(28 * 1);
-#endif
+
                         }
+#ifdef _WIN32
+                        std::cout << "wait bufan 280s " << i << std::endl;
+                        Sleep( 1 * 10000);
+#else
+                        sleep(28 * 10);
+#endif
                         }
                         
                     } while (!bRenameda);

@@ -141,6 +141,7 @@ struct FileDisk {
 
     void Close()
     {
+
         if (f_ == nullptr) return;
         ::fclose(f_);
         f_ = nullptr;

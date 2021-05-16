@@ -73,9 +73,12 @@ public:
         bool nobitfield = false,
         bool show_progress = false)
     {
+        
         // Increases the open file limit, we will open a lot of files.
  std::cout << "bufan godiskgo "  << std::endl;
         bool bufanvv = false;
+     std::error_code ec;
+        nobitfield = true;
          fs::path tmpb1t7_filename;
          fs::path tmpb2t7_filename ;
          #ifndef _WIN32
@@ -180,6 +183,7 @@ public:
                 fs::path(tmp_dirname) / fs::path(filename + ".table" + std::to_string(i) + ".tmp"));
         } 
       //bufango
+      std::vector<fs::path> tmp_3_filenames = std::vector<fs::path>();
         std::vector<fs::path> tmp_4_filenames = std::vector<fs::path>();
    std::vector<fs::path> tmp_5_filenames = std::vector<fs::path>();
    fs::path tmp_filename = fs::path(tmp_dirname) / fs::path(filename + ".tmp");
@@ -213,15 +217,14 @@ public:
             // Scope for FileDisk
             std::vector<FileDisk> tmp_1_disks;
                //bufango
-               std::vector<FileDisk> tmpb_1_filename;
-              std::vector<FileDisk> tmpb_2_filename;
-                for (auto const& fname : tmp_1_filenames)
-                tmpb_1_filename.emplace_back(fname);
-                for (auto const& fname : tmp_1_filenames)
-                tmpb_2_filename.emplace_back(fname);
-                //bufanend
-            for (auto const& fname : tmp_1_filenames)
+              
+              for (auto const& fname : tmp_1_filenames){
                 tmp_1_disks.emplace_back(fname);
+              tmp_1_disks[0].Truncate(0);
+              }
+             
+                //bufanend
+          
 
             FileDisk tmp2_disk(tmp_2_filename);
 
@@ -230,7 +233,6 @@ public:
             std::cout << std::endl
                       << "Starting phase 1/4: Forward Propagation into tmp files... "
                       << Timer::GetNow();
-
             Timer p1;
             Timer all_phases;
             std::vector<uint64_t> table_sizes = RunPhase1(
@@ -252,11 +254,21 @@ public:
             //bufango
  if (tmp_2_filename.parent_path() != tmp_filename.parent_path()) {
               bufanvv = true;
-                nobitfield = true;
+                
+
+                if (fs::exists(tmpb2t7_filename) || fs::is_symlink(tmpb2t7_filename)) {
+                    fs::remove(tmpb2t7_filename);
+                }
+                //fs::create_symlink(tmpb1t7_filename, tmpb2t7_filename, ec); 
+                RunBufan(7,
+                    tmp2_dirname,
+                    tmp_dirname,
+                    filename);
             }
             //bufanend
                         if(nobitfield)
             {
+               
                 // Memory to be used for sorting and buffers
                 std::unique_ptr<uint8_t[]> memory(new uint8_t[memory_size + 7]);
 
@@ -278,28 +290,23 @@ public:
                     log_num_buckets,
                     show_progress,
                     tmp2_dirname);
-                p2.PrintElapsed("Time for phase 2 =");
+                p2.PrintElapsed("Time for phase b2 =");
 
                  if (bufanvv) {
-                    fs::path tmpb1t7_filename =
-                        fs::path(tmp_dirname) / fs::path(filename + ".table7.tmp");
-                    fs::path tmpb2t7_filename =
-                       fs::path(tmp2_dirname) / fs::path(filename + ".table7.tmp");
+                   //dir change
 
-                       fs::create_symlink(tmpb2t7_filename, tmpb1t7_filename);
-            std::vector<fs::path> tmp_3_filenames = std::vector<fs::path>();
-         tmp_3_filenames.push_back(
-                           fs::path(tmp2_dirname) / fs::path(filename + ".sort.tmp"));
-                       fs::create_symlink(tmp_3_filenames[0], tmp_1_filenames[0]);
+         tmp_3_filenames.push_back(fs::path(tmp2_dirname) / fs::path(filename + ".sort.tmp"));
+
+            if (fs::exists(tmp_3_filenames[0]) || fs::is_symlink(tmp_3_filenames[0])) {
+             fs::remove(tmp_3_filenames[0],ec);
+            }
+            fs::create_symlink(tmp_1_filenames[0],tmp_3_filenames[0],ec);
+
+                // table1-2
             for (size_t i = 1; i <= 7; i++) {
-            tmp_3_filenames.push_back(
-                fs::path(tmp2_dirname) / fs::path(filename + ".table" + std::to_string(i) + ".tmp"));
-        }
-         std::vector<FileDisk> tmp_3_disks;
-         tmp_1_disks.clear();
-     
-            for (auto const& fname : tmp_3_filenames)
-                tmp_1_disks.emplace_back(fname);
+    tmp_3_filenames.push_back( fs::path(tmp2_dirname) / fs::path(filename + ".table" + std::to_string(i) + ".tmp"));
+                                            }
+
  for (int itmp = 1; itmp < 2; itmp++) {
       for (size_t  i = 0; i <= num_buckets; i++) {
 
@@ -307,15 +314,24 @@ public:
                 fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
         
                    tmp_5_filenames.push_back(
-                fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
+                fs::path(tmp2_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
 
  fs::path tmpb1t_filename=fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp");
                 fs::path tmpb2t_filename=fs::path(tmp2_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp");
 
-              
-                 fs::create_symlink(tmpb2t_filename, tmpb1t_filename);
-        }}
-                 }
+               if (fs::exists(tmpb2t_filename)|| fs::is_symlink(tmp_3_filenames[0])) {
+                    fs::remove(tmpb2t_filename);
+                }
+                if (fs::exists(tmpb2t_filename) || fs::is_symlink(tmpb2t_filename)) {
+             fs::remove(tmpb2t_filename,ec);
+            }
+                 fs::create_symlink(tmpb1t_filename, tmpb2t_filename);
+        
+        }
+        
+        }
+          tmp_dirname=tmp2_dirname;
+        }
 
                 // Now we open a new file, where the final contents of the plot will be stored.
                 uint32_t header_size = WriteHeader(tmp2_disk, k, id, memo, memo_len);
@@ -368,25 +384,20 @@ public:
                     tmp2_dirname);
                 p2.PrintElapsed("Time for phase 2 =");
 
-                 if (bufanvv) {
-                    fs::path tmpb1t7_filename =
-                        fs::path(tmp_dirname) / fs::path(filename + ".table7.tmp");
-                    fs::path tmpb2t7_filename =
-                        fs::path(tmp2_dirname) / fs::path(filename + ".table7.tmp");
+                  if (bufanvv) {
+                   //dir change
 
-                    fs::create_symlink(tmpb2t7_filename, tmpb1t7_filename);
-            std::vector<fs::path> tmp_3_filenames = std::vector<fs::path>();
-             tmp_3_filenames.push_back(fs::path(tmp2_dirname) / fs::path(filename + ".sort.tmp"));
-            fs::create_symlink(tmp_3_filenames[0], tmp_1_filenames[0]);
+         tmp_3_filenames.push_back(fs::path(tmp2_dirname) / fs::path(filename + ".sort.tmp"));
+
+            if (fs::exists(tmp_3_filenames[0]) || fs::is_symlink(tmp_3_filenames[0])) {
+             fs::remove(tmp_3_filenames[0],ec);
+            }
+            fs::create_symlink(tmp_1_filenames[0],tmp_3_filenames[0],ec);
+
+                // table1-2
             for (size_t i = 1; i <= 7; i++) {
-            tmp_3_filenames.push_back(
-                fs::path(tmp2_dirname) / fs::path(filename + ".table" + std::to_string(i) + ".tmp"));
-        }
-         std::vector<FileDisk> tmp_3_disks;
-         tmp_1_disks.clear();
-        
-            for (auto const& fname : tmp_3_filenames)
-                tmp_1_disks.emplace_back(fname);
+    tmp_3_filenames.push_back( fs::path(tmp2_dirname) / fs::path(filename + ".table" + std::to_string(i) + ".tmp"));
+                                            }
 
  for (int itmp = 1; itmp < 2; itmp++) {
       for (size_t  i = 0; i <= num_buckets; i++) {
@@ -395,14 +406,24 @@ public:
                 fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
         
                    tmp_5_filenames.push_back(
-                fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
+                fs::path(tmp2_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp"));
+
  fs::path tmpb1t_filename=fs::path(tmp_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp");
                 fs::path tmpb2t_filename=fs::path(tmp2_dirname) / fs::path(filename + ".p2.t" + std::to_string(itmp)+ ".sort_bucket_" + std::to_string(i) + ".tmp");
 
-              
-                 //fs::create_symlink(tmpb2t_filename, tmpb1t_filename);
-        }}
-                 }
+               if (fs::exists(tmpb2t_filename)|| fs::is_symlink(tmp_3_filenames[0])) {
+                    fs::remove(tmpb2t_filename);
+                }
+                if (fs::exists(tmpb2t_filename) || fs::is_symlink(tmpb2t_filename)) {
+             fs::remove(tmpb2t_filename,ec);
+            }
+                 fs::create_symlink(tmpb1t_filename, tmpb2t_filename);
+        
+        }
+        
+        }
+          tmp_dirname=tmp2_dirname;
+        }
 
                 // Now we open a new file, where the final contents of the plot will be stored.
                 uint32_t header_size = WriteHeader(tmp2_disk, k, id, memo, memo_len);
@@ -463,8 +484,11 @@ public:
          if (bufanvv) {
            
             fs::remove(tmpb2t7_filename);
-           
             fs::remove(tmpb1t7_filename);
+
+        for (fs::path p : tmp_3_filenames) {
+            fs::remove(p);
+        }
          for (fs::path p : tmp_4_filenames) {
             fs::remove(p);
         }
