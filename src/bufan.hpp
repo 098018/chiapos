@@ -56,7 +56,7 @@ void*  RunBufan(const int i,
                         }
 #ifdef _WIN32
                         std::cout << "wait bufan 280s " << i << std::endl;
-                        Sleep( 1 * 10000);
+                        Sleep( 28 * 10000);
 #else
                         sleep(28 * 10);
 #endif
